@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ความหมายไพ่ยิปซี</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #debff7;
+            color: #982de4;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #4b0082, #dda0dd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+        }
+        .card {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+        .card img {
+            width: 150px;
+            height: auto;
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .card img:hover {
+            transform: scale(1.1);
+            border-color: #ba55d3;
+        }
+        .card-meaning {
+            margin-top: 10px;
+            font-size: 1.1em;
+            color: #4b0082;
+            display: none;
+        }
+    </style>
+    <script>
+        const cards = {
+            "The Fool": "การเริ่มต้นอะไรใหม่ ๆ การเสี่ยงอันตราย เส้นทางใหม่อาจมีความเสี่ยง แต่เป็นสิ่งที่ต้องลอง",
+            "The Magician": "ความทะเยอทะยาน การลงมือทำ ใช้ความสามารถให้เต็มที่",
+            "The High Priestess": "ความฉลาด มีความรู้ความสามารถ ซ่อนพลังที่แท้จริง",
+            "The Empress": "ความอุดมสมบูรณ์ ความเป็นแม่ ความสุขและเงินทอง",
+            "The Emperor": "การมีอำนาจ ความมั่นคง การถูกบังคับ",
+            "The Hierophant": "การมีความรู้ การแต่งงาน การรวมเป็นหนึ่ง พระคือตัวแทนของผู้มีความรู้และยังเป็นตัวแทนในการแต่งงานรวมเป็นครอบครัวเดียวกัน อาจหมายถึงการเป็นที่พึ่งพาของคนอื่น ๆ",
+            "The Lovers": "ความรัก การตัดสินใจ แน่นอนว่าใบนี้ต้องหมายถึงความรัก ได้พบเจอความรัก หรือต้องตัดสินใจเลือกสิ่งใดสิ่งหนึ่ง",
+            "The Chariot": "ความแน่วแน่ มุ่งมั่น ขยัน ทุ่มเท เมื่อเจอไพ่ใบนี้ เพื่อน ๆ ก็ต้องทำตัวให้แข็งแกร่งยิ่งกว่าม้าศึกถึงจะประสบความสำเร็จในสิ่งที่ทำ",
+            "Strength": "ความแข็งแกร่ง บริหารจัดการเก่ง ไพ่นี้คือตัวแทนของหญิงสาวสุดแกร่ง มีอะไรเข้ามาก็ไม่อาจทำอะไรเธอได้ แถมยังจัดการสิ่งต่าง ๆ ได้เป็นอย่างดีอีกด้วย",
+            "The Hermit": "ความสันโดษ โดดเดี่ยว วิเคราะห์ เมื่อเจอไพ่ใบนี้ก็คงเลี่ยงไม่พ้นการอยู่ตัวคนเดียว การใช้เวลารักษาเยียวยาจิตใจ หรือแม้แต่การใช้เวลาเพื่อคิดวิเคราะห์สิ่งต่าง ๆ รอบตัว อย่าได้ใจร้อนทำสิ่งใดเด็ดขาด",
+            "The Wheel of Fortune": "การเปลี่ยนแปลงครั้งใหญ่ของชีวิต ไม่ว่าจะเป็นด้านใดด้านหนึ่งก็จะมีการเปลี่ยนแปลงเข้ามาแน่นอน สามารถเป็นได้ทั้งการเปลี่ยนแปลงที่ดีหรือไม่ดีก็ได้ ต้องดูควบคู่ร่วมกับไพ่ใบอื่นๆ",
+            "Justice": "มีโอกาสได้เจอเรื่องที่ต้องเกี่ยวข้องกับด้านกฎหมาย หรือจะได้รับการตัดสินบางอย่างที่ยุติธรรมและเป็นผลดีกับตัวเอง",
+            "The Hanged Man": "สิ่งที่กำลังคิดอยู่ คาดหวังอยู่ ต้องมีการรอคอยไปก่อน ห้ามใจร้อน แล้วผลลัพธ์จะสมปรารถนาแน่นอน",
+            "Death": "มีการเปลี่ยนแปลงพลิกผันจากเรื่องที่ร้าย ชีวิตที่แย่มากๆ ด้านต่างๆ จะพลิกฟื้นกลับมาดีอีกครั้ง",
+            "Temperance": "ปัญหาที่เกิดขึ้นต้องมีการประนีประนอมจากตัวเราเอง แล้วผลลัพธ์จะดีมากกว่า หรืออาจต้องมีการเจรจาเพื่อต่อรองอย่างเหมาะสมเพื่อการแก้ไขปัญหาอย่างราบรื่น",
+            "The Devil": "การถูกผูกมัด ถูกบงการบังคับชีวิต ไม่มีอิสระ และสุขภาพจิตใจค่อนข้างไปทางแย่",
+            "The Tower": "จะมีเรื่องที่เปลี่ยนแปลงเกิดขึ้นอย่างกะทันหัน หรือจะมีเรื่องที่เป็นปัญหาทะเลาะเบาะแว้งกับคนใกล้ตัวเข้ามา เป็นช่วงเวลาวุ่นวายพอสมควร",
+            "The Star": "อะไรที่ต้องการให้สำเร็จ ต้องใจเย็นแล้วดำเนินการต่อไป โดยรวมแล้วไม่มีปัญหาอะไร ราบรื่นสงบดี",
+            "The Moon": "ปัญหาและการหลอกลวงกำลังจะเข้ามา ต้องเตรียมตัวรับมือเร็วๆ นี้",
+            "The Sun": "กำลังจะมีเรื่องดี ๆ เข้ามา หรืออะไรที่เคยทำไว้กำลังจะสำเร็จ เตรียมรับข่าวดี",
+            "Judgement": "โอกาสที่เข้ามา โอกาสที่ได้รับ และการสูญเสียโอกาส สามารถเกิดขึ้นได้ทั้งหมดจากการตัดสินใจของเราแค่ครั้งเดียว",
+            "The World": " ความสำเร็จ ความราบรื่น ทุกอย่างที่ต้องการจะประสบความสำเร็จได้ตามมที่หวังแน่นอน",
+            
+            "ไพ่ที่มีถ้วยรูปที่ 1": "เป็นความหมายเกี่ยวกับการได้รับความใจดี ได้รับน้ำใจ หรือแทนการแสดงน้ำใจและความรักต่อผู้อื่นก็ได้ มีโอกาสได้รับสิ่งดีๆ เข้ามา",
+            "ไพ่ที่มีถ้วยรูปที่ 2": "หมายถึง โอกาสด้านความรักมีแนวโน้มที่จะสมหวังสูง",
+            "ไพ่ที่มีถ้วยรูปที่ 3": "แทนความหมายเกี่ยวกับเพื่อนฝูง จะได้รับสิ่งดีๆ หรือมีข่าวดีจากเพื่อนที่ดี เพื่อนคนสนิท",
+            "ไพ่ที่มีถ้วยรูปที่ 4": "หมายถึง ความหดหู่จิตใจและความเบื่อหน่ายในช่วงนี้",
+            "ไพ่ที่มีถ้วยรูปที่ 5": "หมายถึง เรื่องที่เกี่ยวกับความสูญหาย กำลังจะพบเจอความสูญเสีย",
+            "ไพ่ที่มีถ้วยรูปที่ 6": "มีโอกาสได้รับเรื่องราวดีๆ ข่าวดีแบบไม่รู้ตัว หรือมีโอกาสเจอคนที่อยากเจอด้วย",
+            "ไพ่ที่มีถ้วยรูปที่ 7": "โอกาสด้านทางเลือกจะเข้ามาให้ตัดสินใจได้อย่างมากมาย มีตัวเลือกเยอะ สามารถเลือกได้ตามที่ต้องการ",
+            "ไพ่ที่มีถ้วยรูปที่ 8": "มีความหมายเกี่ยวกับการจากลา การออกจากที่เดิมเพื่อเริ่มต้นสิ่งใหม่",
+            "ไพ่ที่มีถ้วยรูปที่ 9": "เป็นไพ่ที่บอกถึงความสมหวังและความสมปรารถนากับเรื่องที่ต้องการทุกอย่าง",
+            "ไพ่ที่มีถ้วยรูปที่ 10": "ไพ่ด้านความสุขที่เข้ามา ความสมบูรณ์และชีวิตที่อยู่ในช่วงดีมากๆ",
+            "ไพ่ที่มีถ้วยรูปที่ 11": "ไพ่ที่เป็นมหาดเล็กถ้วย หมายถึง การได้รับข่าวสารเรื่องราวดีๆ ที่จะเข้ามาเมื่อได้พบเจอสังคม หรือออกไปงานใหญ่ต่างๆ", 
+            "ไพ่ที่มีถ้วยรูปที่ 12": "ไพ่ที่เป็นมหาดเล็กถ้วย หมายถึง การได้รับข่าวสารเรื่องราวดีๆ ที่จะเข้ามาเมื่อได้พบเจอสังคม หรือออกไปงานใหญ่ต่างๆ",
+            "ไพ่ที่มีถ้วยรูปที่ 13": "ไพ่ที่เป็นราชินีถ้วย หมายถึง เรื่องต่างๆ ที่กำลังคิดหรือต้องตัดสินใจ ควรพิจารณาให้ดีอีกครั้ง ใจเย็นแล้วทบทวนอย่างละเอียดอีกหลายๆ ด้าน",
+            "ไพ่ที่มีถ้วยรูปที่ 14": "ไพ่ที่เป็นราชินีถ้วย หมายถึง เรื่องต่างๆ ที่กำลังคิดหรือต้องตัดสินใจ ควรพิจารณาให้ดีอีกครั้ง ใจเย็นแล้วทบทวนอย่างละเอียดอีกหลายๆ ด้าน",
+
+            "ไพ่ที่มีเหรียญรูปที่ 1": "หมายถึง จุดเริ่มต้นของเรื่องการเงินกำลังเป็นไปในทิศทางที่ดี",
+            "ไพ่ที่มีเหรียญรูปที่ 2": "หมายถึง จะใช้จ่ายอะไรต้องคิดให้รอบคอบมากขึ้น ปัญหาหลักเป็นเรื่องการหมุนเงินไม่ทัน",
+            "ไพ่ที่มีเหรียญรูปที่ 3": "หมายถึง ความตั้งใจในการเริ่มต้นสร้างฐานะ สร้างความมั่นคงจะไปในทิศทางที่ดี",
+            "ไพ่ที่มีเหรียญรูปที่ 4": "หมายถึง ช่วงเวลาที่กำลังจะเริ่มมีเงินเก็บออมมากขึ้น ทิศทางความร่ำรวยมีอย่างแน่นอน", 
+            "ไพ่ที่มีเหรียญรูปที่ 5": "หมายถึง การเจอปัญหาเกี่ยวกับด้านการเงินที่หาทางแก้ค่อนข้างยากให้ช่วงนี้ แนะนำให้เน้นจัดการปัญหาก่อน ไม่ควรก่อหนี้เพิ่ม",
+            "ไพ่ที่มีเหรียญรูปที่ 6": "หมายถึง ความเสียเปรียบหรือเสียผลประโยชน์ที่เกี่ยวกับด้านการเงิน",
+            "ไพ่ที่มีเหรียญรูปที่ 7": "หมายถึง ผลตอบแทนที่มาจากการลงทุน ลงแรง หรือการทำอะไรบางอย่างจะทำให้ได้รับผลลัพธ์ที่งอกเงยดี",
+            "ไพ่ที่มีเหรียญรูปที่ 8": "หมายถึง การเงินที่จะได้มาอย่างราบรื่น และมีเงินเหลือมากขึ้น ต้องแลกกับการทำงานหรือเหนื่อยมากขึ้นในช่วงนี้",
+            "ไพ่ที่มีเหรียญรูปที่ 9": "หมายถึง การเงินราบรื่น คล่องมือ และเหลือเก็บเหลือใช้",
+            "ไพ่ที่มีเหรียญรูปที่ 10": "หมายถึง การเงินพร้อมต่อยอดอนาคตชีวิต และราบรื่นต่อเนื่องไม่มีติดขัด",
+            "ไพ่ที่มีเหรียญรูปที่ 11": "ไพ่ที่เป็นมหาดเล็กเหรียญ หมายถึง โอกาสดีๆ ด้านการเงิน หรือการเติบโตเรื่องเกี่ยวกับรายรับจะเข้ามาเร็วๆ นี้",
+            "ไพ่ที่มีเหรียญรูปที่ 12": "ไพ่ที่เป็นอัศวินถือเหรียญ หมายถึง โอกาสด้านการเงินเพิ่มเติมจะเกิดขึ้น เมื่อออกไปหาสิ่งใหม่ๆ ในการเริ่มต้น",
+            "ไพ่ที่มีเหรียญรูปที่ 13": "ไพ่ที่เป็นราชินีเหรียญ หมายถึง ต้องใช้การพิจารณาที่รอบคอบมากขึ้นสำหรับการตัดสินใจเรื่องเกี่ยวกับการเงินช่วงนี้",
+            "ไพ่ที่มีเหรียญรูปที่ 14": "ไพ่ราชาเหรียญ หมายถึง ความคาดหวังด้านการเงินจะสมปรารถนา และมีการเงินที่มั่นคง ไม่ขัดสน ไม่ขาดมือ",
+
+            "ไพ่ที่มีดาบรูปที่ 1": "อุปสรรคจะผ่านพ้น และความสำเร็จกำลังเข้ามา ได้เริ่มต้นสิ่งใหม่ๆ เสียที",
+            "ไพ่ที่มีดาบรูปที่ 2": "หมายถึง ช่วงที่ตกอยู่ในความเครียดสูง ปัญหาทับถมเยอะจนหาทางออกยาก",
+            "ไพ่ที่มีดาบรูปที่ 3": "หมายถึง อุปสรรคและความผิดหวังจะเกิดขึ้นกับเรื่องที่กังวลอยู่",
+            "ไพ่ที่มีดาบรูปที่ 4": "หมายถึง ความกดดันที่เกิดขึ้นจากคนรอบตัวหรือจากตนเอง เป็นช่วงเวลาที่เครียดมาก",
+            "ไพ่ที่มีดาบรูปที่ 5": "หมายถึง ปัญหาทะเลาะกับคนรอบตัว และปัญหายุ่งยากที่วุ่นวายกำลังเข้ามา",
+            "ไพ่ที่มีดาบรูปที่ 6": "หมายถึง การตามแก้ปัญหาที่ตนเองได้ก่อหรือหนีไว้มาโดยตลอด ต้องรีบจัดการให้เรียบร้อย",
+            "ไพ่ที่มีดาบรูปที่ 7": "หมายถึง ปัญหาที่เกี่ยวกับเรื่องที่ทำงาน การทำงาน หรือเพื่อนร่วมงาน",
+            "ไพ่ที่มีดาบรูปที่ 8": "หมายถึง สถานการณ์ความเครียด ความกดดัน ไร้ทางออกของปัญหาเข้ามาบีบบังคับให้ต้องตัดสินใจผิดๆ ",
+            "ไพ่ที่มีดาบรูปที่ 9": "หมายถึง สุขภาพแย่ลงจากปัญหาเกี่ยวกับความเครียด ความคิด และความกดดันต่างๆ ในช่วงนี้",
+            "ไพ่ที่มีดาบรูปที่ 10": "หมายถึง เรื่องความเครียด ความกดดัน และปัญหาต่างๆ กำลังจะผ่านพ้นและจบสิ้นเร็วๆ นี้ด้วยตัวของท่านเอง",
+            "ไพ่ที่มีดาบรูปที่ 11": "ไพ่มหาดเล็กดาบ หมายถึง ปัญหาที่ต้องจัดการหรือต้องตัดสินใจ สามารถจัดการเองได้เลย แล้วจะผ่านพ้นได้ด้วยดี",
+            "ไพ่ที่มีดาบรูปที่ 12": "ไพ่อัศวินดาบ หมายถึง การต่อสู้อย่างเหน็ดเหนื่อยมายาวนานกับปัญหาและอุปสรรคต่างๆ ที่ไม่จบง่าย",
+            "ไพ่ที่มีดาบรูปที่ 13": "ราชินีดาบ หมายถึง การจัดการปัญหายากๆ ได้ด้วยตัวเองอย่างราบรื่นและต้องใช้ความเด็ดขาดในการเข้าสู้ จึงจะชนะได้",
+            "ไพ่ที่มีดาบรูปที่ 14": "ไพ่ราชาดาบ หมายถึง ต้องใช้ความเด็ดเดี่ยว สติปัญญา ความรอบคอบ พิจารณาทุกอย่างก่อนตัดสินใจในการแก้ปัญหาใดๆ ช่วงนี้",
+            
+            "ไพ่ที่มีไม้เท้ารูปที่ 1": "หมายถึง ข่าวดีเกี่ยวกับเรื่องการงานจะเข้ามา",
+            "ไพ่ที่มีไม้เท้ารูปที่ 2": "หมายถึง การวางแผนด้านการงาน หรือการใช้ชีวิตจะไปในทิศทางที่ต้องการ",
+            "ไพ่ที่มีไม้เท้ารูปที่ 3": "หมายถึง เป็นผู้ที่มองการณ์ไกล มีการคิดวางแผนชีวิตไว้อย่างรัดกุมรอบคอบ",
+            "ไพ่ที่มีไม้เท้ารูปที่ 4": "หมายถึง ความสุขสมหวังในด้านชีวิตภาพรวมช่วงนี้ กำลังจะมีข่าวดีเข้ามา",
+            "ไพ่ที่มีไม้เท้ารูปที่ 5": "หมายถึง ต้องมีการแข่งขัน ความเหน็ดเหนื่อยเข้ามา รวมถึงมีโอกาสทะเลาะกับคนใกล้ตัว",
+            "ไพ่ที่มีไม้เท้ารูปที่ 6": "หมายถึง การประสบความสำเร็จในด้านการงานหรือโปรเจกต์ต่างๆ ที่กำลังดำเนินการ",
+            "ไพ่ที่มีไม้เท้ารูปที่ 7": "หมายถึง ปัญหาอุปสรรคเกี่ยวกับการงานเข้ามาอย่างไม่หยุด",
+            "ไพ่ที่มีไม้เท้ารูปที่ 8": "หมายถึง มีโอกาสได้เดินทางไกลจากการทำงานหรือโอกาสใหม่ๆ ที่กำลังเข้ามา",
+            "ไพ่ที่มีไม้เท้ารูปที่ 9": "หมายถึง การตัดสินใจสำคัญเรื่องการงานหรือแผนเกี่ยวกับการทำอะไรบางอย่างต้องคิดให้รอบคอบ",
+            "ไพ่ที่มีไม้เท้ารูปที่ 10": "หมายถึง มีงานถาโถมเข้ามามากเกินไป หรือมีภาระที่ต้องรับผิดชอบเยอะมากในช่วงนี้ ค่อนข้างเหนื่อย",
+            "ไพ่ที่มีไม้เท้ารูปที่ 11": "มหาดเล็กไม้เท้า หมายถึง การได้รับข่าวสารดีๆ ความสำเร็จที่เกิดขึ้นจากความพยายามของตนเอง",
+            "ไพ่ที่มีไม้เท้ารูปที่ 12": "อัศวินไม้เท้า หมายถึง การจัดการหน้าที่การงาน ความรับผิดชอบต่างๆ ผ่านไปอย่างราบรื่น",
+            "ไพ่ที่มีไม้เท้ารูปที่ 13": "ราชินีไม้เท้า หมายถึง มีโอกาสริเริ่มโปรเจคใหม่ๆ มีความคิดสร้างสรรค์ในการเริ่มต้นอะไรใหม่ๆ เยอะ",
+            "ไพ่ที่มีไม้เท้ารูปที่ 14": "ราชาไม้เท้า หมายถึง ไอเดียใหม่ๆ กำลังเกิดขึ้น เป็นโอกาสของการเริ่มต้นที่ดี",
+        };
+
+        function toggleMeaning(cardName, element) {
+            const meaningElement = element.querySelector('.card-meaning');
+            if (meaningElement.style.display === "block") {
+                meaningElement.style.display = "none";
+            } else {
+                meaningElement.textContent = `${cards[cardName]}`;
+                meaningElement.style.display = "block";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>ความหมายไพ่ยิปซี</h1>
+    <div class="card" onclick="toggleMeaning('The Fool', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\tf.webp" alt="The Fool">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The Magician', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\tmg.webp" alt="The Magician">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The High Priestess', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\thp.webp" alt="The High Priestess">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The Empress', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\tmph.webp" alt="The Empress">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The Emperor', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\tepr.webp" alt="The Emperor">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The Hierophant', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\thrp.webp" alt="The Hierophant">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The Lovers', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\tlv.webp" alt="The Lovers">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The Chariot', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\tcr.webp" alt="The Chariot">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('Strength', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\st.webp" alt="Strength">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The Hermit', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\thm.webp" alt="The Hermit">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The Wheel of Fortune', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\wof.webp" alt="The Wheel of Fortune">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('Justice', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\jt.webp" alt="Justice">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The Hanged Man', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\thmn.webp" alt="The Hanged Man">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('Death', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\dea.webp" alt="Death">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('Temperance', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\tp.webp" alt="Temperance">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The Devil', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\tdv.webp" alt="The Devil">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The Tower', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\ttw.webp" alt="The Tower">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The Star', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\tst.webp" alt="The Star">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The Moon', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\tmn.webp" alt="The Moon">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The Sun', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\tsun.webp" alt="The Sun">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('Judgement', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\jgm.png" alt="Judgement">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('The World', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\twr.webp" alt="The World">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีถ้วยรูปที่ 1', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\a1.webp" alt="ไพ่ที่มีถ้วยรูปที่ 1">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีถ้วยรูปที่ 2', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\a2.webp" alt="ไพ่ที่มีถ้วยรูปที่ 2">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีถ้วยรูปที่ 3', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\a3.webp" alt="ไพ่ที่มีถ้วยรูปที่ 3">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีถ้วยรูปที่ 4', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\a4.webp" alt="ไพ่ที่มีถ้วยรูปที่ 4">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีถ้วยรูปที่ 5', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\a5.webp" alt="ไพ่ที่มีถ้วยรูปที่ 5">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีถ้วยรูปที่ 6', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\a6.webp" alt="ไพ่ที่มีถ้วยรูปที่ 6">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีถ้วยรูปที่ 7', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\a7.webp" alt="ไพ่ที่มีถ้วยรูปที่ 7">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีถ้วยรูปที่ 8', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\a8.webp" alt="ไพ่ที่มีถ้วยรูปที่ 8">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีถ้วยรูปที่ 9', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\a9.webp" alt="ไพ่ที่มีถ้วยรูปที่ 9">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีถ้วยรูปที่ 10', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\a10.webp" alt="ไพ่ที่มีถ้วยรูปที่ 10">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีถ้วยรูปที่ 11', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\a11.webp" alt="ไพ่ที่มีถ้วยรูปที่ 11">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีถ้วยรูปที่ 12', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\a12.webp" alt="ไพ่ที่มีถ้วยรูปที่ 12">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีถ้วยรูปที่ 13', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\a13.webp" alt="ไพ่ที่มีถ้วยรูปที่ 13">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีถ้วยรูปที่ 14', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\a14.webp" alt="ไพ่ที่มีถ้วยรูปที่ 14">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีเหรียญรูปที่ 1', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\w1.png" alt="ไพ่ที่มีเหรียญรูปที่ 1">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีเหรียญรูปที่ 2', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\w2.png" alt="ไพ่ที่มีเหรียญรูปที่ 2">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีเหรียญรูปที่ 3', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\w3.webp" alt="ไพ่ที่มีเหรียญรูปที่ 3">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีเหรียญรูปที่ 4', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\w4.png" alt="ไพ่ที่มีเหรียญรูปที่ 4">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีเหรียญรูปที่ 5', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\w5.png" alt="ไพ่ที่มีเหรียญรูปที่ 5">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีเหรียญรูปที่ 6', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\w6.webp" alt="ไพ่ที่มีเหรียญรูปที่ 6">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีเหรียญรูปที่ 7', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\w7.png" alt="ไพ่ที่มีเหรียญรูปที่ 7">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีเหรียญรูปที่ 8', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\w8.png" alt="ไพ่ที่มีเหรียญรูปที่ 8">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีเหรียญรูปที่ 9', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\w9.webp" alt="ไพ่ที่มีเหรียญรูปที่ 9">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีเหรียญรูปที่ 10', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\w10.webp" alt="ไพ่ที่มีเหรียญรูปที่ 10">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีเหรียญรูปที่ 11', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\w11.png" alt="ไพ่ที่มีเหรียญรูปที่ 11">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีเหรียญรูปที่ 12', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\w12.webp" alt="ไพ่ที่มีเหรียญรูปที่ 12">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีเหรียญรูปที่ 13', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\w13.png" alt="ไพ่ที่มีเหรียญรูปที่ 13">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีเหรียญรูปที่ 14', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\w14.png" alt="ไพ่ที่มีเหรียญรูปที่ 14">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีดาบรูปที่ 1', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\1.webp" alt="ไพ่ที่มีดาบรูปที่ 1">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีดาบรูปที่ 2', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\2.webp" alt="ไพ่ที่มีดาบรูปที่ 2">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีดาบรูปที่ 3', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\3.webp" alt="ไพ่ที่มีดาบรูปที่ 3">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีดาบรูปที่ 4', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\4.webp" alt="ไพ่ที่มีดาบรูปที่ 4">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีดาบรูปที่ 5', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\5.webp" alt="ไพ่ที่มีดาบรูปที่ 5">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีดาบรูปที่ 6', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\6.webp" alt="ไพ่ที่มีดาบรูปที่ 6">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีดาบรูปที่ 7', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\7.webp" alt="ไพ่ที่มีดาบรูปที่ 7">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีดาบรูปที่ 8', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\8.webp" alt="ไพ่ที่มีดาบรูปที่ 8">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีดาบรูปที่ 9', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\9.webp" alt="ไพ่ที่มีดาบรูปที่ 9">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีดาบรูปที่ 10', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\10.webp" alt="ไพ่ที่มีดาบรูปที่ 10">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีดาบรูปที่ 11', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\11.webp" alt="ไพ่ที่มีดาบรูปที่ 11">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีดาบรูปที่ 12', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\12.webp" alt="ไพ่ที่มีดาบรูปที่ 12">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีดาบรูปที่ 13', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\13.webp" alt="ไพ่ที่มีดาบรูปที่ 13">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีดาบรูปที่ 14', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\14.webp" alt="ไพ่ที่มีดาบรูปที่ 14">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีไม้เท้ารูปที่ 1', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\q1.webp" alt="ไพ่ที่มีไม้เท้ารูปที่ 1">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีไม้เท้ารูปที่ 2', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\q2.webp" alt="ไพ่ที่มีไม้เท้ารูปที่ 2">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีไม้เท้ารูปที่ 3', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\q3.webp" alt="ไพ่ที่มีไม้เท้ารูปที่ 3">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีไม้เท้ารูปที่ 4', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\q4.webp" alt="ไพ่ที่มีไม้เท้ารูปที่ 4">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีไม้เท้ารูปที่ 5', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\q5.webp" alt="ไพ่ที่มีไม้เท้ารูปที่ 5">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีไม้เท้ารูปที่ 6', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\q6.webp" alt="ไพ่ที่มีไม้เท้ารูปที่ 6">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีไม้เท้ารูปที่ 7', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\q7.webp" alt="ไพ่ที่มีไม้เท้ารูปที่ 7">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีไม้เท้ารูปที่ 8', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\q8.webp" alt="ไพ่ที่มีไม้เท้ารูปที่ 8">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีไม้เท้ารูปที่ 9', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\q9.webp" alt="ไพ่ที่มีไม้เท้ารูปที่ 9">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีไม้เท้ารูปที่ 10', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\q10.webp" alt="ไพ่ที่มีไม้เท้ารูปที่ 10">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีไม้เท้ารูปที่ 11', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\q11.webp" alt="ไพ่ที่มีไม้เท้ารูปที่ 11">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีไม้เท้ารูปที่ 12', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\q12.webp" alt="ไพ่ที่มีไม้เท้ารูปที่ 12">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีไม้เท้ารูปที่ 13', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\q13.webp" alt="ไพ่ที่มีไม้เท้ารูปที่ 13">
+        <div class="card-meaning"></div>
+    </div>
+    <div class="card" onclick="toggleMeaning('ไพ่ที่มีไม้เท้ารูปที่ 14', this)">
+        <img src="c:\Users\tawan\OneDrive\เดสก์ท็อป\ไพ่\q14.webp" alt="ไพ่ที่มีไม้เท้ารูปที่ 14">
+        <div class="card-meaning"></div>
+    </div>
+   
+</body>
+</html>
